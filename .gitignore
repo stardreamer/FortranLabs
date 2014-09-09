@@ -1,0 +1,8 @@
+*.o
+*.ko
+*.d
+*.obj
+*.csv
+*.gif
+
+bin/
