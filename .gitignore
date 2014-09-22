@@ -4,5 +4,6 @@
 *.obj
 *.csv
 *.gif
+*.mod
 
 bin/

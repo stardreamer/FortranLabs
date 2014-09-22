@@ -9,7 +9,7 @@ MODDIR := mod
 
 f90comp := gfortran
 
-FLAGS :=  -Wall -pedantic -Wstrict-overflow=4  -Wextra  -Wshadow -O2  -c -std=f95 
+FLAGS :=  -Wall -pedantic -Wtabs  -Wstrict-overflow=4  -Wextra  -Wshadow -O2  -c -std=f95 
 BINDIR_REL := $(addprefix ../, $(BINDIR))
 
 MODDIR_REL := $(addprefix ../, $(MODDIR))
@@ -51,7 +51,8 @@ $(OBJDIR_REL)/%.o: $(SRCDIR_REL)/%.f90
 clean:
 	@rm -f $(OBJDIR_REL)/*.o
 	@rm -f $(OBJDIR_REL)/*.mod
-	@rm -f $(BINDIR_REL)/*
+	@find $(BINDIR_REL)/ -type f -not -name '*conf' | xargs rm -f
+
 	@echo "Очистка завершена!"
 delete:
 	@echo "ПОТРАЧЕНО"
