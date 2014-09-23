@@ -16,9 +16,9 @@ MODDIR_REL := $(addprefix ../, $(MODDIR))
 
 SRCDIR_REL := $(addprefix ../, $(SRCDIR))
 
-SRCFILES := $(wildcard $(addsuffix /*.f90, $(SRCDIR_REL)))
+SRCFILES := $(sort $(wildcard $(addsuffix /*.f90, $(SRCDIR_REL))))
 
-MODSRCFILES := $(wildcard $(addsuffix /*.f90, $(MODDIR_REL)))
+MODSRCFILES := $(sort $(wildcard $(addsuffix /*.f90, $(MODDIR_REL))))
 
 OBJDIR_REL := $(addprefix ../, $(OBJDIR))
 

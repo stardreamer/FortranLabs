@@ -18,11 +18,19 @@ end function f
     
 program hello
 use iso_fortran_env
+use internal_data_types
+use simple_algorithm
 use logger
 use errors
 use fileworker
 
+real, external :: f
+
 type(configuration) :: conf
+type(resultdata), pointer :: pAnswer => NULL()
+
 conf = read_configuration('/home/doctor/Labs/FortranLabs/Lab2/bin/default.conf')
+
+call calculate_solution(conf, pAnswer, f)
     
 end program hello
