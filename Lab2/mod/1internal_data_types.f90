@@ -1,7 +1,7 @@
 module internal_data_types
     type :: configuration
         integer :: mode = 0
-        integer :: numslice = 0
+        integer :: numslice = 100
         real :: timestep = 0
         real :: stoptime = 0
         real :: eps = 0.001
