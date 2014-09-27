@@ -4,32 +4,45 @@ module simple_algorithm
     implicit none
     
     contains
-    
-    subroutine calculate_solution(conf, pAnswer, f)
+ 
+    !subroutine get_analitical_solution(alpha, pAnswer)
+        
+        
+    !end subroutine get_analitical_solution
+  
+    subroutine calculate_solution(conf, answer, f)
           real, external :: f
           type(configuration), intent(in) :: conf
-          type(resultdata),pointer :: pAnswer(:)
+          type(resultdata) :: answer
           
-          real, pointer :: zerovalues(:,:)
+          type(slice) :: local_slice
           
           real :: step 
+          
           integer :: a = 1 
           
-          step = 1./(conf % numslice -1.)
+          !calculating step
+          step = 1. / (conf % numslice -1.)
           
           
-          allocate(pAnswer(1:100))
-          allocate(zerovalues(1 : conf % numslice, 1 : 2))
+          !preallocation
+          allocate(answer % calc_result(1:100))
+          allocate(local_slice % x(1 : conf % numslice))
+          allocate(local_slice % values(1 : conf % numslice))
           
           
-          do while (a < conf % numslice)
-                zerovalues(a, 1) = a*step
-                zerovalues(a, 2) = f(zerovalues(a, 1))
-                a = a + 1
+          
+          !Setting up start values
+          local_slice % x = (/(a * step, a=1, conf % numslice)/)  
+          local_slice % values = (/(f(local_slice % x(a)), a=1, conf % numslice)/)
 
-          end do
+          !Saving current result
+          answer % calc_result(1) % time = 0.
+          answer % calc_result(1) % current_slice = local_slice
           
-          pAnswer(1) % pdataset => zerovalues
+          print *, size(answer % calc_result)
+          call extend_result(answer, 5)
+          print *, size(answer % calc_result)
           
     end subroutine calculate_solution 
     
