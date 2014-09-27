@@ -26,7 +26,7 @@ module simple_algorithm
           
           
           !preallocation
-          allocate(answer % calc_result(1:100))
+          allocate(answer % calc_result(1: conf % start_time_slice))
           allocate(local_slice % x(1 : conf % numslice))
           allocate(local_slice % values(1 : conf % numslice))
           
@@ -41,7 +41,7 @@ module simple_algorithm
           answer % calc_result(1) % current_slice = local_slice
           
           print *, size(answer % calc_result)
-          call extend_result(answer, 5)
+          call extend_result(answer, 2)
           print *, size(answer % calc_result)
           
     end subroutine calculate_solution 

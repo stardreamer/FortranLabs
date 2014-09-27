@@ -5,6 +5,8 @@ module internal_data_types
         real :: timestep = 0
         real :: stoptime = 0
         real :: eps = 0.001
+        real :: alpha = 2.
+        integer :: start_time_slice = 100 
     end type configuration
     
     type :: slice

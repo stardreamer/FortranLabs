@@ -60,7 +60,11 @@ function read_configuration(filename) result(conf)
         elseif (fst == "stoptime") then
             read(snd,'(f10.3)') conf % stoptime
         elseif (fst == "eps") then
-            read(snd,'(f10.3)') conf % eps    
+            read(snd,'(f10.3)') conf % eps   
+        elseif (fst == "alpha") then
+            read(snd,'(f10.3)') conf % alpha  
+        elseif (fst == "start_time_slice") then
+            read(snd,'(i10)') conf % start_time_slice  
         else
             errorcode = FILE_ERROR
         end if
