@@ -22,7 +22,10 @@ module userfunc
         integer, intent(in) :: n
         real :: y
         
-        y=18./(pi*real(n))
+        y=20. * ( ( sin(pi*n/10) ) ** 3) * ( 6.*cos(pi*n/5.) + 4.*cos(2.*pi*n/5.) +&
+        & 2. * cos(3.*pi*n/5.)+3.)/((pi*n)**2)
+        
+        y = 2.*y
 
     end function fint
 end module userfunc
@@ -36,16 +39,13 @@ use fileworker
 use simple_algorithm
 use userfunc
 
-integer :: i=1
 type(configuration) :: conf
 type(resultdata) :: answer
 
 conf = read_configuration('/home/doctor/Labs/FortranLabs/Lab2/bin/default.conf')
 
 call calculate_solution(conf, answer, f, fint)
-do while (i<conf % numslice)
-    print *, answer % calc_result(2) % current_slice % x(i), answer % calc_result(3) % current_slice % values(i)
-    i=i+1
-end do 
+call printToGnuplot(answer)
+
 call free_result(answer)   
 end program hello
