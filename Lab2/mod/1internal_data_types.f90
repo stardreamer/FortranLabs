@@ -6,6 +6,7 @@ module internal_data_types
         real :: stoptime = 0
         real :: eps = 0.001
         real :: alpha = 2.
+        real :: step = 0.
         integer :: start_time_slice = 100 
     end type configuration
     
@@ -32,8 +33,14 @@ module internal_data_types
     
     subroutine free_slice(Uslice)
         type(slice), intent(inout) :: Uslice 
-        deallocate(Uslice % x)
-        deallocate(Uslice % values)
+        
+        if (associated(Uslice % x)) then
+            deallocate(Uslice % x)
+        end if
+        
+        if (associated(Uslice % values)) then
+            deallocate(Uslice % values)
+        end if
         
         Uslice % x => NULL()
         Uslice % values => NULL()
@@ -49,8 +56,15 @@ module internal_data_types
     
     subroutine free_result(Udata)
         type(resultdata), intent(inout) :: Udata
-        integer :: a = 1
+        integer :: a = 2
         
+        !FIXME: VERY BAD MOVEMENT
+        do while (a <= size(Udata % calc_result))
+            Udata % calc_result(a) % current_slice % x =>NULL()
+            a = a + 1
+        end do
+        
+        a = 1
         do while (a <= size(Udata % calc_result))
             call free_timeslice(Udata % calc_result(a))
             a = a + 1
@@ -72,7 +86,8 @@ module internal_data_types
             allocate(slice2 % values(1:size(slice1 % values)))
         end if
         
-        slice2 % x = slice1 % x
+        !FIXME: works only if grid has equal cell size 
+        slice2 % x => slice1 % x
         slice2 % values = slice1 % values
     end subroutine copy_slice
     
