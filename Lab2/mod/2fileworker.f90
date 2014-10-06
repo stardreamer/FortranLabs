@@ -74,6 +74,16 @@ function read_configuration(filename) result(conf)
     close(flH)
 end function read_configuration
 
+subroutine printReport(conf, answer)
+    type(resultdata) :: answer
+    type(configuration) :: conf
+    integer, parameter :: flH = 11
+    integer :: i = 1, j = 1
+    
+    open(flH, file="/home/doctor/Labs/FortranLabs/Lab2/bin/results.txt",action="write",status="replace")
+    
+    close(flH)
+end subroutine printToGnuplot
 subroutine printToGnuplot(answer)
     type(resultdata) :: answer
     integer, parameter :: flH = 11
@@ -99,5 +109,31 @@ subroutine printToGnuplot(answer)
     
     close(flH)
 end subroutine printToGnuplot
+
+subroutine printToGnuplotAnim(answer)
+    type(resultdata) :: answer
+    integer, parameter :: flH = 11
+    integer :: i = 1, j = 1
+    
+    open(flH, file="/home/doctor/Labs/FortranLabs/Lab2/bin/results.txt",action="write",status="replace")
+    
+    do while(i <= size(answer % calc_result))
+        if (.not. (answer % calc_result(i) % time < 0) ) then
+            j = 1
+            do while (j <= size( answer % calc_result(i) % current_slice % x))
+                write(flH, *) answer % calc_result(i) % time, &
+                                                              & answer % calc_result(i) % current_slice % x(j), &
+                                                              & answer % calc_result(i) % current_slice % values(j)            
+            j = j + 1
+            end do
+        else
+            exit
+        end if
+        write(flH, *) 
+        i = i + 1
+    end do
+    
+    close(flH)
+end subroutine printToGnuplotAnim
 
 end module fileworker

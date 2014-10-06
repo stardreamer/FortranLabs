@@ -1,4 +1,7 @@
 module internal_data_types
+
+    real, parameter :: pi = 3.1415927
+        
     type :: configuration
         integer :: mode = 0
         integer :: numslice = 100

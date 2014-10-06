@@ -4,7 +4,7 @@ module simple_algorithm
     
     implicit none
     
-    REAL, PARAMETER :: pi = 3.1415927
+
     
     contains
  
@@ -14,33 +14,58 @@ module simple_algorithm
         
         diff = maxval(abs(sol1 % current_slice % values - sol2 % current_slice % values))
     end function compare_sol
+    
     !calculate implicit solution
     subroutine get_implicit_solution(conf, answer, last_timeslice)
         type(resultdata) :: answer
         type(timeslice)  :: last_timeslice
         integer :: i = 1, ntime = 2, maxi = 0
         type(configuration), intent(in) :: conf
-        real, dimension(1 : (size(last_timeslice % current_slice % x) -1 )) :: A, B
+        real, dimension(2 : (size(last_timeslice % current_slice % x)-1)) :: A, B
+        real :: s = 1.
         
-         do 
-             last_timeslice % time = last_timeslice % time + conf % timestep 
-             i = 2 
+        maxi = size(last_timeslice % current_slice % x) 
+        A(2) = 1. / (2. + s) 
+        s = ((conf % step ** 2) / (conf % alpha * conf % timestep) )
+        
+        last_timeslice % current_slice % values(1) = 0
+        last_timeslice % current_slice % values(maxi) = 0
+        
+        do 
+            last_timeslice % time = last_timeslice % time + conf % timestep 
              
-             
+            B(2) = s * (answer % calc_result(ntime - 1) % current_slice % values(2)) / (2. + s) 
+            
+            i = 3
+            
+            do while(i < maxi)
+                A(i) = 1./(2. + s - A(i-1))
+                B(i) = (s * answer % calc_result(ntime - 1) % current_slice % values(i) + B(i-1))/(2. + s - A(i-1))
+                i = i + 1
+            end do
+            
+            i = maxi - 1
+            do while(i > 1)
+                last_timeslice % current_slice % values(i) = A(i) * &
+                & last_timeslice % current_slice % values(i + 1) + B(i)
+                i = i - 1
+            end do
+            last_timeslice % current_slice % values(1) = 0
             if (ntime > size(answer % calc_result)) then
                 call extend_result(answer, 2)
             end if
             
             answer % calc_result(ntime) = last_timeslice
             
-            if (compare_sol(last_timeslice , answer % calc_result(ntime -1)) < conf % eps) then
+            if (compare_sol(last_timeslice , answer % calc_result(ntime - 1)) < conf % eps) then
                 exit
             end if
             ntime = ntime + 1
-         end do 
-            
+        end do 
+        print *, ntime
         
     end subroutine get_implicit_solution
+    
     !calculate explicit solution
     subroutine get_explicit_solution(conf, answer, last_timeslice)
         type(resultdata) :: answer
@@ -135,6 +160,7 @@ module simple_algorithm
             ntime = ntime + 1
             
         end do
+        print *, ntime
     end subroutine get_analitical_solution
   
     subroutine calculate_solution(conf, answer, f, fint)
@@ -145,8 +171,6 @@ module simple_algorithm
           real, pointer :: xgrid(:) => NULL()
           
           type(timeslice) :: local_timeslice
-          
-          real :: step 
           
           integer :: a = 1 
           
@@ -182,6 +206,8 @@ module simple_algorithm
             call get_analitical_solution(conf, fint, answer, local_timeslice)
           case (1)
             call get_explicit_solution(conf, answer, local_timeslice)
+          case (2)
+            call get_implicit_solution(conf, answer, local_timeslice)
           case default
             errorcode = SMT_BAD
           end select
