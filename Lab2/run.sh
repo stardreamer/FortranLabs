@@ -1,10 +1,13 @@
 #!/bin/bash
 
-rm -f render/animation/*.png
+rm -f results/animation/*.png
+rm -f results/*.avi
+rm -f results/*.txt
+
 cd bin/
 ./fortranlab
-cp 'anim.txt' ../render/
-cd ../render
+
+cd ../results
 ./animator.gp
 mencoder 'mf://animation/*.png' -mf type=png:fps=20 -ovc lavc -lavcopts vcodec=wmv2 -oac copy -o  'result.avi'
 mplayer 'result.avi'

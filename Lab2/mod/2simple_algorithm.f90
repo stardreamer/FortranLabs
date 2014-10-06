@@ -20,7 +20,7 @@ module simple_algorithm
         type(resultdata) :: answer
         type(timeslice)  :: last_timeslice
         integer :: i = 1, ntime = 2, maxi = 0
-        type(configuration), intent(in) :: conf
+        type(configuration), intent(inout) :: conf
         real, dimension(2 : (size(last_timeslice % current_slice % x)-1)) :: A, B
         real :: s = 1.
         s = ((conf % step ** 2) / (conf % alpha * conf % timestep) )
@@ -68,7 +68,10 @@ module simple_algorithm
             end if
             ntime = ntime + 1
         end do 
-        print *, ntime
+        
+        if (conf % stoptime < 0.) then
+            conf % stoptime = last_timeslice % time
+        end if
         
     end subroutine get_implicit_solution
     
@@ -76,7 +79,7 @@ module simple_algorithm
     subroutine get_explicit_solution(conf, answer, last_timeslice)
         type(resultdata) :: answer
         type(timeslice)  :: last_timeslice
-        type(configuration), intent(in) :: conf
+        type(configuration), intent(inout) :: conf
         integer :: i = 1, ntime = 2, maxi = 0
         real :: corr_parameter = 0
         
@@ -118,13 +121,17 @@ module simple_algorithm
             end if
             ntime = ntime + 1
         end do
-        print *, ntime
+        
+        if (conf % stoptime < 0.) then
+            conf % stoptime = last_timeslice % time
+        end if
+        
     end subroutine get_explicit_solution
     !calculates analitical solution
     subroutine get_analitical_solution(conf, fint, answer, last_timeslice)
         type(resultdata) :: answer
         type(timeslice)  :: last_timeslice
-        type(configuration), intent(in) :: conf
+        type(configuration), intent(inout) :: conf
         real, external :: fint
         integer :: n = 3, i = 1, ntime = 2
         real :: newelem, oldelem, totalsum
@@ -179,7 +186,11 @@ module simple_algorithm
             ntime = ntime + 1
             
         end do
-        print *, ntime
+        
+        if (conf % stoptime < 0.) then
+            conf % stoptime = last_timeslice % time
+        end if
+        
     end subroutine get_analitical_solution
   
     subroutine calculate_solution(conf, answer, f, fint)
@@ -194,15 +205,15 @@ module simple_algorithm
           integer :: a = 1 
           
           !check conf
-          if (abs(conf % alpha ) < 1e-4) then
-            errorcode = SMT_BAD
+          if (abs(conf % alpha ) < 1e-5) then
+            errorcode = BAD_ALPHA
             return
           end if
           !calculating step
           conf % step = 1. / (conf % numslice -1.)
           
           if ( conf % timestep < 1e-4 ) then
-            conf % timestep = (conf % step**2)/(4. * conf % alpha)
+            conf % timestep = (conf % step**2)/(10. * conf % alpha)
           end if
           !preallocation
           allocate(answer % calc_result(1: conf % start_time_slice))
@@ -228,10 +239,9 @@ module simple_algorithm
           case (2)
             call get_implicit_solution(conf, answer, local_timeslice)
           case default
-            errorcode = SMT_BAD
+            errorcode = UNKNOWN_MODE
+            return
           end select
-          !call get_analitical_solution(conf, fint, answer, local_timeslice)
-          !call get_explicit_solution(conf, answer, local_timeslice)
           
     end subroutine calculate_solution 
     

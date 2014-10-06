@@ -5,11 +5,13 @@ module internal_data_types
     type :: configuration
         integer :: mode = 0
         integer :: numslice = 100
-        real :: timestep = 0
-        real :: stoptime = 0
+        real :: timestep = -1.
+        real :: stoptime = -1.
         real :: eps = 0.001
         real :: alpha = 2.
         real :: step = 0.
+        real :: out_time = -1.
+        integer :: out_freq = -1
         integer :: start_time_slice = 100 
     end type configuration
     
@@ -60,6 +62,10 @@ module internal_data_types
     subroutine free_result(Udata)
         type(resultdata), intent(inout) :: Udata
         integer :: a = 2
+        
+        if ( .not. associated(Udata % calc_result) ) then
+            return
+        end if
         
         !FIXME: VERY BAD MOVEMENT
         do while (a <= size(Udata % calc_result))

@@ -63,8 +63,12 @@ function read_configuration(filename) result(conf)
             read(snd,'(f10.3)') conf % eps   
         elseif (fst == "alpha") then
             read(snd,'(f10.3)') conf % alpha  
+        elseif (fst == "out_time") then
+            read(snd,'(f10.3)') conf % out_time 
         elseif (fst == "start_time_slice") then
             read(snd,'(i10)') conf % start_time_slice  
+        elseif (fst == "out_freq") then
+            read(snd,'(i10)') conf % out_freq
         else
             errorcode = FILE_ERROR
         end if
@@ -78,18 +82,59 @@ subroutine printReport(conf, answer)
     type(resultdata) :: answer
     type(configuration) :: conf
     integer, parameter :: flH = 11
-    integer :: i = 1, j = 1
-    
-    open(flH, file="/home/doctor/Labs/FortranLabs/Lab2/bin/results.txt",action="write",status="replace")
+
+    open(flH, file="/home/doctor/Labs/FortranLabs/Lab2/results/report.txt",action="write",status="replace")
+    write(flH, *) 'End time: ', conf % stoptime
+    write(flH, *) 'Timestep: ', conf % timestep
+    write(flH, *) 'Step: ', conf % step
+    write(flH, *) 'Alpha: ', conf % alpha
+    write(flH, *) 'Eps: ', conf % eps
+    write(flH, *) 'Total timesteps: ', size(answer % calc_result)
+    write(flH, *) 'Outputed timesteps: ', size(answer % calc_result) / conf % out_freq
     
     close(flH)
 end subroutine printReport
-subroutine printToGnuplot(answer)
+
+subroutine printResult(conf, answer)
     type(resultdata) :: answer
+    type(configuration) :: conf
+    integer :: i = 1, j = 1
+    
+    if (conf % out_time > 0) then
+        do 
+        
+            if (answer % calc_result(i) % time >= 0 &
+            & .and. answer % calc_result(i) % time < conf % out_time &
+            &.and. i < size(answer % calc_result)) then
+                i = i + 1
+            else
+                i = i - 1
+                exit
+            end if
+        end do
+
+        j = 1
+        do while (j <= size( answer % calc_result(i) % current_slice % x))
+            write(*, *) answer % calc_result(i) % time, &
+                                                          & answer % calc_result(i) % current_slice % x(j), &
+                                                          & answer % calc_result(i) % current_slice % values(j)            
+            j = j + 1
+        end do
+    else
+        return
+    end if
+end subroutine printResult
+subroutine printToGnuplot(conf, answer)
+    type(resultdata) :: answer
+    type(configuration) :: conf
     integer, parameter :: flH = 11
     integer :: i = 1, j = 1
     
-    open(flH, file="/home/doctor/Labs/FortranLabs/Lab2/bin/results.txt",action="write",status="replace")
+    open(flH, file="/home/doctor/Labs/FortranLabs/Lab2/results/surface.txt",action="write",status="replace")
+    
+    if (conf % out_freq < 0) then
+        conf % out_freq = 1
+    end if
     
     do while(i <= size(answer % calc_result))
         if (.not. (answer % calc_result(i) % time < 0) ) then
@@ -104,23 +149,36 @@ subroutine printToGnuplot(answer)
             exit
         end if
         write(flH, *) 
-        i = i + 1
+        
+
+        i = i + conf % out_freq
+
+        
     end do
     
     close(flH)
 end subroutine printToGnuplot
 
-subroutine printToGnuplotAnim(answer)
+subroutine printToGnuplotAnim(conf, answer)
     type(resultdata) :: answer
+    type(configuration) :: conf
     integer, parameter :: flH = 11
     integer :: i = 1, j = 1
     
-    open(flH, file="/home/doctor/Labs/FortranLabs/Lab2/bin/anim.txt",action="write",status="replace")
+    open(flH, file="/home/doctor/Labs/FortranLabs/Lab2/results/anim.txt",action="write",status="replace")
     
+    if ( .not. associated(answer % calc_result) ) then
+        return
+    end if
+    
+    if (conf % out_freq < 0) then
+        conf % out_freq = 1
+    end if
+
     do while(i <= size(answer % calc_result))
         if (.not. (answer % calc_result(i) % time < 0) ) then
             j = 1
-            write(flH, *) i-1, size( answer % calc_result(i) % current_slice % x)
+            write(flH, *) i, size( answer % calc_result(i) % current_slice % x)
             do while (j <= size( answer % calc_result(i) % current_slice % x))
                 write(flH, *) j, &
                                                               & answer % calc_result(i) % current_slice % x(j), &
@@ -132,7 +190,9 @@ subroutine printToGnuplotAnim(answer)
         end if
         write(flH, *) 
         write(flH, *) 
-        i = i + 1
+        
+        i = i + conf % out_freq
+        
     end do
     
     close(flH)

@@ -26,7 +26,7 @@ module userfunc
         & 2. * cos(3.*pi*n/5.)+3.)/((pi*real(n))**2)
         
 
-        y = 2.*y
+        y = 2. * y
 
     end function fint
 end module userfunc
@@ -46,7 +46,10 @@ type(resultdata) :: answer
 conf = read_configuration('/home/doctor/Labs/FortranLabs/Lab2/bin/default.conf')
 
 call calculate_solution(conf, answer, f, fint)
-call printToGnuplotAnim(answer)
+call printStr(getErrorString(), Output_Unit)
+call printToGnuplotAnim(conf, answer)
+call printReport(conf,answer)
+call printResult(conf,answer)
 
 call free_result(answer)   
 end program hello

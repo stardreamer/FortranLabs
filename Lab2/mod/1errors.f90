@@ -1,8 +1,10 @@
 module errors
 implicit none
 integer :: errorcode = 0
-integer, parameter :: UNKNOWN_ERROR = 1, OK = 0, SMT_BAD = -1, FILE_ERROR =-2
-character (len = 20), dimension(-2:1), private :: error_strings = (/&
+integer, parameter :: UNKNOWN_ERROR = 1, OK = 0, SMT_BAD = -1, FILE_ERROR =-2, BAD_ALPHA = -3, UNKNOWN_MODE = -4
+character (len = 20), dimension(-4:1), private :: error_strings = (/&
+                                                        &"Unknown algorithm   ",&
+                                                        &"Wrong alpha ~ 0     ",&
                                                         &"File Error          ",&
                                                         &"Smt wrong           ",&
                                                         &"All Right           ",&
