@@ -43,7 +43,7 @@ use userfunc
 type(configuration) :: conf
 type(resultdata) :: answer
 
-conf = read_configuration('/home/doctor/Labs/FortranLabs/Lab2/bin/default.conf')
+conf = read_configuration('/home/doctor/Labs/FortranLabs/Lab2/config/default.conf')
 
 call calculate_solution(conf, answer, f, fint)
 call printStr(getErrorString(), Output_Unit)
