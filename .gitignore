@@ -4,6 +4,8 @@
 *.obj
 *.csv
 *.gif
+*.png
+*.avi
 *.mod
 
 bin/
