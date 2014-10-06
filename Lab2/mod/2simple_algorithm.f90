@@ -183,7 +183,7 @@ module simple_algorithm
           conf % step = 1. / (conf % numslice -1.)
           
           if ( conf % timestep < 1e-4 ) then
-            conf % timestep = (conf % step**2)/(4. * conf % alpha)
+            conf % timestep = (conf % step**2)/(6. * conf % alpha)
           end if
           !preallocation
           allocate(answer % calc_result(1: conf % start_time_slice))

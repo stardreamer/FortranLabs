@@ -51,7 +51,7 @@ $(OBJDIR_REL)/%.o: $(SRCDIR_REL)/%.f90
 clean:
 	@rm -f $(OBJDIR_REL)/*.o
 	@rm -f $(OBJDIR_REL)/*.mod
-	@find $(BINDIR_REL)/ -type f -not -name '*conf' | xargs rm -f
+	#@find $(BINDIR_REL)/ -type f -not -name '*conf' | xargs rm -f
 
 	@echo "Очистка завершена!"
 delete:
