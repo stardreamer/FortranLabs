@@ -1,7 +1,11 @@
 module internal_data_types
 
     real, parameter :: pi = 3.1415927
-        
+    integer, parameter :: ANALITICAL_ALG = 0, EXPLICIT_ALG = 1, IMPLICIT_ALG = 2
+    character(len = 20), dimension(0:2) :: Alg_Literals = (/&
+                                                        &"Analitical algorithm",&
+                                                        &"Explicit algorithm  ",&
+                                                        &"Implicit algorithm  "/)     
     type :: configuration
         integer :: mode = 0
         integer :: numslice = 100

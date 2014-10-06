@@ -91,6 +91,9 @@ subroutine printReport(conf, answer)
     write(flH, *) 'Eps: ', conf % eps
     write(flH, *) 'Total timesteps: ', size(answer % calc_result)
     write(flH, *) 'Outputed timesteps: ', size(answer % calc_result) / conf % out_freq
+    if (conf % mode >= 0 .and. conf % mode <= size(Alg_Literals)) then
+        write(flH, *) 'Mode: ', Alg_Literals(conf % mode)
+    end if
     
     close(flH)
 end subroutine printReport

@@ -232,11 +232,11 @@ module simple_algorithm
           
           !Calculating solution
           select case (conf % mode)
-          case (0)
+          case (ANALITICAL_ALG)
             call get_analitical_solution(conf, fint, answer, local_timeslice)
-          case (1)
+          case (EXPLICIT_ALG)
             call get_explicit_solution(conf, answer, local_timeslice)
-          case (2)
+          case (IMPLICIT_ALG)
             call get_implicit_solution(conf, answer, local_timeslice)
           case default
             errorcode = UNKNOWN_MODE

@@ -8,7 +8,8 @@ cd bin/
 ./fortranlab
 
 cd ../results
-./animator.gp
+./animator.gp 
+./surface.gp 
 mencoder 'mf://animation/*.png' -mf type=png:fps=20 -ovc lavc -lavcopts vcodec=wmv2 -oac copy -o  'result.avi'
 mplayer 'result.avi'
 cd ../

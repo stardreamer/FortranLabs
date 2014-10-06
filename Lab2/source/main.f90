@@ -48,6 +48,7 @@ conf = read_configuration('/home/doctor/Labs/FortranLabs/Lab2/config/default.con
 call calculate_solution(conf, answer, f, fint)
 call printStr(getErrorString(), Output_Unit)
 call printToGnuplotAnim(conf, answer)
+call printToGnuplot(conf, answer)
 call printReport(conf,answer)
 call printResult(conf,answer)
 
