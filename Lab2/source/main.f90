@@ -4,7 +4,7 @@ module userfunc
     function f(x) result(y)
         real, intent(in) :: x 
         real :: y
-        if (x < 0.1) then
+        if (x <= 0.1) then
             y = 0.
         else if (x < 0.3) then
             y = 5. * x - 0.5
@@ -22,9 +22,10 @@ module userfunc
         integer, intent(in) :: n
         real :: y
         
-        y=20. * ( ( sin(pi*n/10) ) ** 3) * ( 6.*cos(pi*n/5.) + 4.*cos(2.*pi*n/5.) +&
-        & 2. * cos(3.*pi*n/5.)+3.)/((pi*n)**2)
+        y=20. * ( ( sin(pi*real(n)/10) ) ** 3) * ( 6.*cos(pi*n/5.) + 4.*cos(2.*pi*n/5.) +&
+        & 2. * cos(3.*pi*n/5.)+3.)/((pi*real(n))**2)
         
+
         y = 2.*y
 
     end function fint

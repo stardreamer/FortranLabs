@@ -5,7 +5,7 @@ set terminal png font "Droid, 14" size 750,750
 set key off
 set size square
 
-iterations=100 #задаем число кадров
+iterations=1000 #задаем число кадров
 iterator=0
 offset=0.0
 load "animate.gp"

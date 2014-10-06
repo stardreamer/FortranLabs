@@ -23,16 +23,22 @@ module simple_algorithm
         type(configuration), intent(in) :: conf
         real, dimension(2 : (size(last_timeslice % current_slice % x)-1)) :: A, B
         real :: s = 1.
-        
+        s = ((conf % step ** 2) / (conf % alpha * conf % timestep) )
         maxi = size(last_timeslice % current_slice % x) 
         A(2) = 1. / (2. + s) 
-        s = ((conf % step ** 2) / (conf % alpha * conf % timestep) )
         
-        last_timeslice % current_slice % values(1) = 0
-        last_timeslice % current_slice % values(maxi) = 0
+        
+        last_timeslice % current_slice % values(1) = 0.
+        last_timeslice % current_slice % values(maxi) = 0.
         
         do 
             last_timeslice % time = last_timeslice % time + conf % timestep 
+            
+            if (conf % stoptime > 0.) then
+                if (last_timeslice % time > conf % stoptime) then
+                    exit
+                end if
+            end if
              
             B(2) = s * (answer % calc_result(ntime - 1) % current_slice % values(2)) / (2. + s) 
             
@@ -50,7 +56,7 @@ module simple_algorithm
                 & last_timeslice % current_slice % values(i + 1) + B(i)
                 i = i - 1
             end do
-            last_timeslice % current_slice % values(1) = 0
+
             if (ntime > size(answer % calc_result)) then
                 call extend_result(answer, 2)
             end if
@@ -82,6 +88,12 @@ module simple_algorithm
         
         do 
             last_timeslice % time = last_timeslice % time + conf % timestep            
+            
+            if (conf % stoptime > 0.) then
+                if (last_timeslice % time > conf % stoptime) then
+                    exit
+                end if
+            end if
             
             i = 2
             
@@ -121,19 +133,26 @@ module simple_algorithm
  
         do 
             last_timeslice % time = last_timeslice % time + conf % timestep
+            
+            if (conf % stoptime > 0.) then
+                if (last_timeslice % time > conf % stoptime) then
+                    exit
+                end if
+            end if
+            
             i = 1
             do while (i <= size(last_timeslice % current_slice % x))
-                n = 3
+                
                 oldelem = fint(1) * & 
                                     & exp(- conf % alpha * last_timeslice % time * (pi ** 2)) * &
                                     & sin(pi * last_timeslice % current_slice % x(i))
                 newelem = fint(2) * &
-                                    & exp(- conf % alpha * last_timeslice % time * ((2*pi) ** 2)) * &
+                                    & exp(- conf % alpha * last_timeslice % time * ((2.*pi) ** 2)) * &
                                     & sin(2. * pi * last_timeslice % current_slice % x(i))
                 totalsum = oldelem + newelem 
                 
-                
-                do while (abs(newelem - oldelem) >= conf % eps)
+                n = 3
+                do while (abs(newelem - oldelem) > conf % eps)
                     oldelem = newelem
                     
                     newelem = fint(n) * &
@@ -183,7 +202,7 @@ module simple_algorithm
           conf % step = 1. / (conf % numslice -1.)
           
           if ( conf % timestep < 1e-4 ) then
-            conf % timestep = (conf % step**2)/(6. * conf % alpha)
+            conf % timestep = (conf % step**2)/(4. * conf % alpha)
           end if
           !preallocation
           allocate(answer % calc_result(1: conf % start_time_slice))
