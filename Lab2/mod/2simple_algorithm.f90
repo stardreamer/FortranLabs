@@ -8,7 +8,7 @@ module simple_algorithm
     
     contains
  
-    function compare_sol(sol1,sol2) result(diff)
+    function compare_sol(sol1, sol2) result(diff)
         type(timeslice) :: sol1, sol2
         real :: diff
         
@@ -127,6 +127,7 @@ module simple_algorithm
         end if
         
     end subroutine get_explicit_solution
+    
     !calculates analitical solution
     subroutine get_analitical_solution(conf, fint, answer, last_timeslice)
         type(resultdata) :: answer
@@ -159,7 +160,7 @@ module simple_algorithm
                 totalsum = oldelem + newelem 
                 
                 n = 3
-                do while (abs(newelem - oldelem) > conf % eps)
+                do while (abs(newelem - oldelem) > 1e-6)
                     oldelem = newelem
                     
                     newelem = fint(n) * &
@@ -209,6 +210,7 @@ module simple_algorithm
             errorcode = BAD_ALPHA
             return
           end if
+          
           !calculating step
           conf % step = 1. / (conf % numslice -1.)
           
