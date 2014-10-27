@@ -9,7 +9,7 @@ MODDIR := mod
 
 f90comp := gfortran
 
-FLAGS :=  -Wall -pedantic -Wtabs  -Wstrict-overflow=4  -Wextra  -Wshadow -O2  -c -std=f95  -fcheck=all
+FLAGS :=  -Wall -pedantic -Wtabs  -Wstrict-overflow=4  -Wextra  -Wshadow -O2  -c -std=f95  
 BINDIR_REL := $(addprefix ../, $(BINDIR))
 
 MODDIR_REL := $(addprefix ../, $(MODDIR))

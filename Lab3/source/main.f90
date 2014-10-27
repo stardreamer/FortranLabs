@@ -20,7 +20,7 @@ call cpu_time(start)
 call simulate_mol_system(cur_system)
 call cpu_time(finish)
 
-!~ call printToGnuplot(cur_system)
+call printToGnuplot(cur_system)
 print '("Time = ",f6.3," seconds.")', finish - start
 !~ do while (j <=  size(cur_system % sys))
 !~     print *, cur_system % sys(j) % F

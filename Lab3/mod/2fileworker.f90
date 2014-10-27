@@ -79,12 +79,12 @@ end function read_configuration
 subroutine printToGnuplot(mol_sys)
     type(mol_system) :: mol_sys
     integer, parameter :: flH = 11
-    integer :: i = 1, j = 1
+    integer :: i = 1
     
     open(flH, file="/home/doctor/Labs/FortranLabs/Lab3/results/T1.txt",action="write",status="replace")
 
     do while (i <= size(mol_sys % Ekin))
-        write(flH, *) mol_sys % sys (7) % coord
+        write(flH, *) i, (2./(3.*(kb/mol_sys % eps)))*mol_sys % Ekin(i)
         i = i + 1
     end do
 
